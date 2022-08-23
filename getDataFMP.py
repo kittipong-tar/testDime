@@ -1,4 +1,5 @@
 # import libralies
+from msilib import schema
 import requests
 import json
 import pandas as pd
@@ -11,12 +12,14 @@ url_del = "https://financialmodelingprep.com/api/v3/delisted-companies?page=0&ap
 response_his = requests.get(url=url_his)
 response_del = requests.get(url=url_del)
 print("Complete: Get Data from APIs")
+
 # Convert json to DataFrame
 historical = response_his.json()["historical"]
 delisted = response_del.json()
 df_his = pd.DataFrame(historical)
 df_del = pd.DataFrame(delisted)
 print("Complete: Convert json to DataFrame")
+
 # Convert to correct data type
 schema_his = {
     "date": "datetime64",
@@ -34,16 +37,17 @@ schema_del = {
     "ipoDate": "datetime64", 
     "delistedDate": "datetime64"
 }
-
 for col, dtype in schema_his.items():
     df_his[col] = df_his[col].astype(dtype)
 for col, dtype in schema_del.items():
     df_del[col] = df_del[col].astype(dtype)
 print("Complete: Convert to correct data type")
+
 # save to csv file
 df_his.to_csv("historicalDividends.csv", index=False)
 df_del.to_csv("delistedCompanies.csv", index=False)
 print("Complete: save to csv file")
+
 # set up Connection python to MySQL
 conn = mysql.connector.connect(
     host = "localhost",
@@ -54,6 +58,7 @@ conn = mysql.connector.connect(
 
 cursor = conn.cursor()
 print("Complete: set up Connection python to MySQL")
+
 # Create table on testDB database
 create_his = """
 CREATE TABLE historicalDividends (
@@ -78,6 +83,7 @@ CREATE TABLE delistedCompanies (
 cursor.execute(create_his)
 cursor.execute(create_del)
 print("Complete: Create table on testDB database")
+
 # Insert value to table
 with open('historicalDividends.csv') as csv_file:
     csvfile = csv.reader(csv_file, delimiter=",")
@@ -112,8 +118,8 @@ insert_del = """
 
 cursor.executemany(insert_his, all_value_his)
 cursor.executemany(insert_del, all_value_del)
-print("Complete: Insert value to table")
 conn.commit()
+print("Complete: Insert value to table")
 
 conn.close()
 print("Complete: All task Done!")
