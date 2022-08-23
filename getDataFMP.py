@@ -43,7 +43,7 @@ cursor = conn.cursor()
 
 # Create table on testDB database
 create_table = """
-CREATE TABLE AAPL_historical_6 (
+CREATE TABLE AAPL_historical_7 (
     date date,
     label varchar(255),
     adjDividend float,
@@ -68,7 +68,7 @@ with open('AAPL_historical.csv') as csv_file:
 del all_value[0]
 
 cursor.executemany("""
-    INSERT INTO AAPL_historical_6 (date, label, adjDividend, dividend, recordDate, paymentDate, declarationDate)
+    INSERT INTO AAPL_historical_7 (date, label, adjDividend, dividend, recordDate, paymentDate, declarationDate)
     VALUES (%s, %s, %s, %s, %s, %s, %s)
     """, all_value)
 
