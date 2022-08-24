@@ -26,17 +26,19 @@ df_del = df_del.replace('', np.nan)
 print("Complete: Convert json to DataFrame")
 
 # Credentials to database connection
-host = "localhost"
-user = "root"
-pw = "password1"
-db = "DBPRD"
-
 try:
+    host = "localhost"
+    user = "root"
+    pw = "password1"
+    db = "DBPRD"
     engine = create_engine("mysql+pymysql://{user}:{pw}@{host}/{db}".format(host=host, db=db, user=user, pw=pw))
-except exc.DatabaseError as e:
-    print(e)
-else:
+    engine.connect()
     print("Complete: Connecting to database: {db}".format(db=db))
+except exc.SQLAlchemyError as e:
+    error=str(e.orig)
+    print(error)
+except RuntimeError as e:
+    print("Username or Password is wrong. Please check and try it again!")
 
 # Writing dataframt to MySql
 schema_his = {
@@ -59,7 +61,6 @@ schema_del = {
 try:
     df_his.to_sql('historicalDividends', engine, index=False, if_exists='replace', dtype=schema_his)
     df_del.to_sql('delistedCompanies', engine, index=False, if_exists='replace', dtype=schema_del)
-except exc.DataError as e:
+    print("Congratulations! All data is writen on Database:{db}".format(db=db))
+except exc.SQLAlchemyError as e:
     print(e)
-else:
-    print("Complete: Writing dataframe to MySqlDB")
