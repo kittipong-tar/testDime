@@ -33,10 +33,10 @@ db = "DBPRD"
 
 try:
     engine = create_engine("mysql+pymysql://{user}:{pw}@{host}/{db}".format(host=host, db=db, user=user, pw=pw))
-except exc.SQLAlchemyError as e:
+except exc.DatabaseError as e:
     print(e)
 else:
-    print("Complete: Credentials to database connection")
+    print("Complete: Connecting to database: {db}".format(db=db))
 
 # Writing dataframt to MySql
 schema_his = {
@@ -59,7 +59,7 @@ schema_del = {
 try:
     df_his.to_sql('historicalDividends', engine, index=False, if_exists='replace', dtype=schema_his)
     df_del.to_sql('delistedCompanies', engine, index=False, if_exists='replace', dtype=schema_del)
-except exc.SQLAlchemyError as e:
+except exc.DataError as e:
     print(e)
 else:
-    print("Complete: writing dataframe to MySqlDB")
+    print("Complete: Writing dataframe to MySqlDB")
