@@ -2,7 +2,6 @@
 import requests
 import json
 import pandas as pd
-import mysql.connector
 import numpy as np
 from datetime import datetime
 from sqlalchemy import create_engine, exc
